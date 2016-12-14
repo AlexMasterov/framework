@@ -35,15 +35,15 @@ class DispatchHandler
         callable $next
     ) {
         /**
-         * @var $action Equip\Action
+         * @var $action Equip\Route
          */
-        list($action, $args) = $this->dispatch(
+        list($route, $args) = $this->dispatch(
             $this->dispatcher(),
             $request->getMethod(),
             $request->getUri()->getPath()
         );
 
-        $request = $request->withAttribute(ActionHandler::ACTION_ATTRIBUTE, $action);
+        $request = $request->withAttribute(ActionHandler::ROUTE_ATTRIBUTE, $route);
 
         foreach ($args as $key => $value) {
             $request = $request->withAttribute($key, $value);

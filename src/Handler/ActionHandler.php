@@ -2,12 +2,12 @@
 
 namespace Equip\Handler;
 
-use Equip\Action;
-use Equip\Adr\DomainInterface;
 use Equip\Adr\InputInterface;
 use Equip\Adr\PayloadInterface;
 use Equip\Adr\ResponderInterface;
+use Equip\Contract\ActionInterface;
 use Equip\Resolver\ResolverTrait;
+use Equip\Route;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Relay\ResolverInterface;
@@ -16,7 +16,7 @@ class ActionHandler
 {
     use ResolverTrait;
 
-    const ACTION_ATTRIBUTE = 'equip/adr:action';
+    const ROUTE_ATTRIBUTE = 'equip/adr:route';
 
     /**
      * @param ResolverInterface $resolver
@@ -36,10 +36,10 @@ class ActionHandler
         ResponseInterface $response,
         callable $next
     ) {
-        $action = $request->getAttribute(self::ACTION_ATTRIBUTE);
-        $request = $request->withoutAttribute(self::ACTION_ATTRIBUTE);
+        $route = $request->getAttribute(self::ROUTE_ATTRIBUTE);
+        $request = $request->withoutAttribute(self::ROUTE_ATTRIBUTE);
 
-        $response = $this->handle($action, $request, $response);
+        $response = $this->handle($route, $request, $response);
 
         return $next($request, $response);
     }
@@ -47,42 +47,42 @@ class ActionHandler
     /**
      * Use the action collaborators to get a response.
      *
-     * @param Action $action
+     * @param Route $route
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
      *
      * @return ResponseInterface
      */
     private function handle(
-        Action $action,
+        Route $route,
         ServerRequestInterface $request,
         ResponseInterface $response
     ) {
-        $domain = $this->resolve($action->getDomain());
-        $input = $this->resolve($action->getInput());
-        $responder = $this->resolve($action->getResponder());
+        $action = $this->resolve($route->getAction());
+        $input = $this->resolve($route->getInput());
+        $responder = $this->resolve($route->getResponder());
 
-        $payload = $this->payload($domain, $input, $request);
+        $payload = $this->payload($action, $input, $request);
         $response = $this->response($responder, $request, $response, $payload);
 
         return $response;
     }
 
     /**
-     * Execute the domain to get a payload using input from the request.
+     * Execute the action to get a payload using input from the request.
      *
-     * @param DomainInterface $domain
+     * @param ActionInterface $action
      * @param InputInterface $input
      * @param ServerRequestInterface $request
      *
      * @return PayloadInterface
      */
     private function payload(
-        DomainInterface $domain,
+        ActionInterface $action,
         InputInterface $input,
         ServerRequestInterface $request
     ) {
-        return $domain($input($request));
+        return $action($input($request));
     }
 
     /**

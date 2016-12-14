@@ -2,7 +2,7 @@
 
 namespace Equip;
 
-use Equip\Action;
+use Equip\Route;
 use Equip\Exception\DirectoryException;
 use Equip\Structure\Dictionary;
 
@@ -19,105 +19,105 @@ class Directory extends Dictionary
 
     /**
      * @param string $path
-     * @param string|Action $domainOrAction
+     * @param string|Route $actionOrRoute
      *
      * @return static
      */
-    public function any($path, $domainOrAction)
+    public function any($path, $actionOrRoute)
     {
-        return $this->action(self::ANY, $path, $domainOrAction);
+        return $this->route(self::ANY, $path, $actionOrRoute);
     }
 
     /**
      * @param string $path
-     * @param string|Action $domainOrAction
+     * @param string|Route $actionOrRoute
      *
      * @return static
      */
-    public function get($path, $domainOrAction)
+    public function get($path, $actionOrRoute)
     {
-        return $this->action(self::GET, $path, $domainOrAction);
+        return $this->route(self::GET, $path, $actionOrRoute);
     }
 
     /**
      * @param string $path
-     * @param string|Action $domainOrAction
+     * @param string|Route $actionOrRoute
      *
      * @return static
      */
-    public function post($path, $domainOrAction)
+    public function post($path, $actionOrRoute)
     {
-        return $this->action(self::POST, $path, $domainOrAction);
+        return $this->route(self::POST, $path, $actionOrRoute);
     }
 
     /**
      * @param string $path
-     * @param string|Action $domainOrAction
+     * @param string|Route $actionOrRoute
      *
      * @return static
      */
-    public function put($path, $domainOrAction)
+    public function put($path, $actionOrRoute)
     {
-        return $this->action(self::PUT, $path, $domainOrAction);
+        return $this->route(self::PUT, $path, $actionOrRoute);
     }
 
     /**
      * @param string $path
-     * @param string|Action $domainOrAction
+     * @param string|Route $actionOrRoute
      *
      * @return static
      */
-    public function patch($path, $domainOrAction)
+    public function patch($path, $actionOrRoute)
     {
-        return $this->action(self::PATCH, $path, $domainOrAction);
+        return $this->route(self::PATCH, $path, $actionOrRoute);
     }
 
     /**
      * @param string $path
-     * @param string|Action $domainOrAction
+     * @param string|Route $actionOrRoute
      *
      * @return static
      */
-    public function head($path, $domainOrAction)
+    public function head($path, $actionOrRoute)
     {
-        return $this->action(self::HEAD, $path, $domainOrAction);
+        return $this->route(self::HEAD, $path, $actionOrRoute);
     }
 
     /**
      * @param string $path
-     * @param string|Action $domainOrAction
+     * @param string|Route $actionOrRoute
      *
      * @return static
      */
-    public function delete($path, $domainOrAction)
+    public function delete($path, $actionOrRoute)
     {
-        return $this->action(self::DELETE, $path, $domainOrAction);
+        return $this->route(self::DELETE, $path, $actionOrRoute);
     }
 
     /**
      * @param string $path
-     * @param string|Action $domainOrAction
+     * @param string|Route $actionOrRoute
      *
      * @return static
      */
-    public function options($path, $domainOrAction)
+    public function options($path, $actionOrRoute)
     {
-        return $this->action(self::OPTIONS, $path, $domainOrAction);
+        return $this->route(self::OPTIONS, $path, $actionOrRoute);
     }
 
     /**
      * @param string $method
      * @param string $path
-     * @param string|Action $domainOrAction
+     * @param string|Route $actionOrRoute
      *
      * @return static
      */
-    public function action($method, $path, $domainOrAction)
+    public function route($method, $path, $actionOrRoute)
     {
-        if ($domainOrAction instanceof Action) {
-            $action = $domainOrAction;
+        if ($actionOrRoute instanceof Route) {
+            $action = $actionOrRoute;
         } else {
-            $action = new Action($domainOrAction);
+            $action = new Route($actionOrRoute);
         }
 
         return $this->withValue(sprintf('%s %s', $method, $path), $action);
@@ -126,14 +126,14 @@ class Directory extends Dictionary
     /**
      * @inheritDoc
      *
-     * @throws DirectoryException If a value is not an Action instance
+     * @throws DirectoryException If a value is not an Route instance
      */
     protected function assertValid(array $data)
     {
         parent::assertValid($data);
 
         foreach ($data as $value) {
-            if (!is_object($value) || !$value instanceof Action) {
+            if (!is_object($value) || !$value instanceof Route) {
                 throw DirectoryException::invalidEntry($value);
             }
         }
