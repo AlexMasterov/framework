@@ -2,6 +2,8 @@
 
 namespace Equip\Contract;
 
+use Equip\Adr\PayloadInterface;
+
 interface ActionInterface
 {
     /**
@@ -9,5 +11,5 @@ interface ActionInterface
      *
      * @return PayloadInterface
      */
-    public function __invoke(array $input);
+    public function __invoke(array $input): PayloadInterface;
 }
